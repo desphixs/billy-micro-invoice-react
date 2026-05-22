@@ -1,16 +1,31 @@
 import { useState } from 'react'
-// Import premium, clean icons from Lucide React to give our app a modern, premium design
+// Import premium, clean icons from Lucide React to give our app a modern design
 import { 
-  ReceiptText
+  ReceiptText,
+  Settings
 } from 'lucide-react'
+// Import custom, modular view components from our new components directory
+import InvoiceOverview from './components/InvoiceOverview'
+import SettingsView from './components/SettingsView'
 
 function App() {
-  // -------------------------------------------------------------
-  // STATE MANAGEMENT
-  // -------------------------------------------------------------
-  // We use useState to keep track of which page the user is currently viewing.
-  // By default, we start on the 'invoices' page.
-  const [activeTab, setActiveTab] = useState('settings')
+  // We initialize the activeTab state to keep track of which menu page is selected.
+  // - By default, we start on the 'invoices' view.
+  // - 'activeTab' holds our current tab name as a string.
+  // - 'setActiveTab' is the function we call to update this tab value.
+  const [activeTab, setActiveTab] = useState('invoices')
+
+  // We define a list of mock invoices inside our React state.
+  // - Each invoice contains an 'id', 'clientName', 'amount', 'dueDate', and 'status'.
+  // - This list matches what Sarah Freelance needs to track.
+  // - We use 'useState' so that when we eventually add features to edit or mark paid, the UI updates instantly.
+  const [invoices, setInvoices] = useState([
+    { id: 'INV-001', clientName: 'Acme Corporation', amount: 1500, dueDate: '2026-06-01', status: 'Paid' },
+    { id: 'INV-002', clientName: 'Dexter Labs', amount: 850, dueDate: '2026-05-28', status: 'Pending' },
+    { id: 'INV-003', clientName: 'Wayne Enterprises', amount: 3200, dueDate: '2026-05-15', status: 'Overdue' },
+    { id: 'INV-004', clientName: 'Stark Industries', amount: 4200, dueDate: '2026-06-10', status: 'Pending' },
+    { id: 'INV-005', clientName: 'Oscorp Technologies', amount: 950, dueDate: '2026-05-10', status: 'Paid' }
+  ])
 
   return (
     // This is our main outer container. 
@@ -50,20 +65,38 @@ function App() {
           <nav className="space-y-1">
             
             {/* Navigation Button: Invoices Overview */}
+            {/* 
+              We listen for standard mouse clicks using 'onClick'.
+              When clicked, we trigger 'setActiveTab' to change the state to 'invoices'.
+            */}
             <button
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 text-slate-500 hover:bg-slate-50 hover:text-slate-900`}
+              onClick={() => setActiveTab('invoices')}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+                activeTab === 'invoices'
+                  ? 'bg-indigo-50 text-indigo-600'
+                  : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+              }`}
             >
               {/* If active, the icon changes color to match the active text theme */}
-              <ReceiptText size={18} className= {'text-slate-400'} />
+              <ReceiptText size={18} className={activeTab === 'invoices' ? 'text-indigo-500' : 'text-slate-400'} />
               <span>Invoices Overview</span>
             </button>
 
             {/* Navigation Button: App Settings */}
+            {/* 
+              We listen for standard mouse clicks using 'onClick'.
+              When clicked, we trigger 'setActiveTab' to change the state to 'settings'.
+            */}
             <button
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 text-slate-500 hover:bg-slate-50 hover:text-slate-900`}
+              onClick={() => setActiveTab('settings')}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+                activeTab === 'settings'
+                  ? 'bg-indigo-50 text-indigo-600'
+                  : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+              }`}
             >
               {/* If active, the icon changes color to match the active text theme */}
-              <ReceiptText size={18} className= {'text-slate-400'} />
+              <Settings size={18} className={activeTab === 'settings' ? 'text-indigo-500' : 'text-slate-400'} />
               <span>App Settings</span>
             </button>
 
@@ -94,32 +127,23 @@ function App() {
         -------------------------------------------------------------
         - 'flex-1' allows the content to expand and fill all remaining horizontal screen space.
         - 'p-10' adds generous, aesthetic breathing room so elements feel premium.
-        - 'max-w-5xl' sets a beautiful centered layout limit for great readability.
       */}
-      <main className="flex-1 p-10 space-y-32">
+      <main className="flex-1 p-10">
         
-         
-           <div className="space-y-8 animate-fadeIn">
-            <div>
-              <h2 className="text-2xl font-bold text-slate-950 tracking-tight">Invoice Overview</h2>
-              <p className="text-sm text-slate-500 mt-1">Manage your invoices and track payments.</p>
-            </div>
-            <div className="bg-white rounded-3xl border border-slate-100 p-8 shadow-sm space-y-6"></div>
-
-          </div>
+         {/* 
+           We use conditional rendering to show the Invoices Overview panel only when activeTab is 'invoices'.
+           This ensures clean page switches without reloading the browser!
+         */}
+         {activeTab === 'invoices' && (
+           <InvoiceOverview invoices={invoices} />
+         )}
           
-          <div className="space-y-8 animate-fadeIn">
-            
-            {/* Page Header */}
-            <div>
-              <h2 className="text-2xl font-bold text-slate-950 tracking-tight">App Settings</h2>
-              <p className="text-sm text-slate-500 mt-1">Configure your freelance profile and payment details.</p>
-            </div>
-            
-            {/* Editable Profile Information Form Card */}
-            <div className="bg-white rounded-3xl border border-slate-100 p-8 shadow-sm space-y-6"></div>
-
-          </div>
+         {/* 
+           We use conditional rendering to show the App Settings panel only when activeTab is 'settings'.
+         */}
+         {activeTab === 'settings' && (
+           <SettingsView />
+         )}
 
       </main>
 
