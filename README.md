@@ -1,16 +1,17 @@
-# React + Vite
+# Build Billy: A Micro Invoice App for Freelancers
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Description
+You are going to build Billy, a super clean and modern invoice tracker for freelancers. You will start by building a nice navigation sidebar that lets users switch between their list of client invoices and the app settings. Then, you will make a dynamic details page that shows all the important information for a single invoice when a user clicks on it. Finally, you will build a reusable badge component that automatically changes color to show if an invoice is paid, pending, or overdue, and let users mark invoices as paid with a single click.
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Tech Stack
 
-## React Compiler
+- React
+- TailwindCSS
+- TMDB API
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Tool
+- [Staqed](https://staqed.com)
+- [Vite](https://vite.dev)
+- [TailwindCSS](https://tailwindcss.com/docs/installation/using-vite)
+- [React](https://react.dev)
