@@ -2,10 +2,14 @@
 import { X } from 'lucide-react'
 // Import our reusable InvoiceStatus badge component
 import InvoiceStatus from './InvoiceStatus'
+// Import our new modular MarkPaidButton component
+import MarkPaidButton from './MarkPaidButton'
 
-// The InvoiceDetail component receives 'invoice' (the selected invoice object)
-// and 'onClose' (a function to clear activeInvoiceId state and close the view) as props.
-export default function InvoiceDetail({ invoice, onClose }) {
+// The InvoiceDetail component receives:
+// - 'invoice': the selected invoice object
+// - 'onClose': a function to clear activeInvoiceId state and close the view
+// - 'onMarkAsPaid': a callback function to set an invoice status to 'Paid'
+export default function InvoiceDetail({ invoice, onClose, onMarkAsPaid }) {
   // If no invoice is selected, we return null to render nothing on screen
   if (!invoice) return null
 
@@ -74,6 +78,13 @@ export default function InvoiceDetail({ invoice, onClose }) {
               <InvoiceStatus status={invoice.status} />
             </div>
           </div>
+
+          {/* 
+            Interactive Action Button component.
+            - This permits Sarah to mark an outstanding invoice as Paid instantly.
+            - We pass the status and trigger the onMarkAsPaid callback when clicked.
+          */}
+          <MarkPaidButton status={invoice.status} onClick={() => onMarkAsPaid(invoice.id)} />
 
           {/* Detailed Line-Item Breakdown */}
           <div className="space-y-4">

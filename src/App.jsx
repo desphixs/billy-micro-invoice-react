@@ -99,6 +99,19 @@ function App() {
   // - If found, it returns the full invoice object containing clients, line items, and status.
   const activeInvoice = invoices.find(invoice => invoice.id === activeInvoiceId)
 
+  // We define a function to update an invoice status to 'Paid' inside our database.
+  // - It maps over our list of invoices.
+  // - If it matches the unique ID, it returns a new invoice object with the status set to 'Paid'.
+  // - Otherwise, it leaves the invoice completely unchanged.
+  // - Finally, it saves the new array into our invoices state.
+  const markAsPaid = (id) => {
+    setInvoices(prevInvoices => 
+      prevInvoices.map(invoice => 
+        invoice.id === id ? { ...invoice, status: 'Paid' } : invoice
+      )
+    )
+  }
+
   return (
     // This is our main outer container. 
     // - 'min-h-screen' ensures the app fills the full height of the user's screen.
@@ -225,10 +238,14 @@ function App() {
         INVOICE DETAIL MODAL OVERLAY
         =============================================================
         - If activeInvoiceId is set and we successfully find that invoice, we show the detail panel.
-        - We pass the activeInvoice object and a close function callback that resets activeInvoiceId to null.
+        - We pass the activeInvoice object, close callback, and markAsPaid callback props.
       */}
       {activeInvoiceId && activeInvoice && (
-        <InvoiceDetail invoice={activeInvoice} onClose={() => setActiveInvoiceId(null)} />
+        <InvoiceDetail 
+          invoice={activeInvoice} 
+          onClose={() => setActiveInvoiceId(null)} 
+          onMarkAsPaid={markAsPaid}
+        />
       )}
 
     </div>
