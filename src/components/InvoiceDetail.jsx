@@ -9,7 +9,8 @@ import MarkPaidButton from './MarkPaidButton'
 // - 'invoice': the selected invoice object
 // - 'onClose': a function to clear activeInvoiceId state and close the view
 // - 'onMarkAsPaid': a callback function to set an invoice status to 'Paid'
-export default function InvoiceDetail({ invoice, onClose, onMarkAsPaid }) {
+// - 'currency': localized currency symbol string (defaults to '$')
+export default function InvoiceDetail({ invoice, onClose, onMarkAsPaid, currency = '$' }) {
   // If no invoice is selected, we return null to render nothing on screen
   if (!invoice) return null
 
@@ -70,7 +71,7 @@ export default function InvoiceDetail({ invoice, onClose, onMarkAsPaid }) {
             <div>
               <h5 className="text-[10px] text-indigo-600/80 font-semibold tracking-wider uppercase">Total Amount Due</h5>
               <p className="text-3xl font-extrabold text-slate-900 tracking-tight mt-1">
-                ${invoice.amount.toLocaleString()}
+                {currency}{invoice.amount.toLocaleString()}
               </p>
             </div>
             <div className="flex flex-col items-end gap-1.5">
@@ -105,9 +106,9 @@ export default function InvoiceDetail({ invoice, onClose, onMarkAsPaid }) {
                     <tr key={index} className="text-slate-700">
                       <td className="py-3 px-4 font-medium text-slate-900">{item.description}</td>
                       <td className="py-3 px-4 text-center">{item.quantity}</td>
-                      <td className="py-3 px-4 text-right">${item.rate.toLocaleString()}</td>
+                      <td className="py-3 px-4 text-right">{currency}{item.rate.toLocaleString()}</td>
                       <td className="py-3 px-4 text-right font-semibold text-slate-900">
-                        ${(item.quantity * item.rate).toLocaleString()}
+                        {currency}{(item.quantity * item.rate).toLocaleString()}
                       </td>
                     </tr>
                   ))}

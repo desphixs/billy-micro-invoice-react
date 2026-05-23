@@ -2,8 +2,11 @@
 import InvoiceStatus from './InvoiceStatus'
 
 // The component for rendering the Invoice Overview view panel.
-// It accepts 'invoices' (an array of invoice objects) and 'onSelectInvoice' (a callback function) as props.
-export default function InvoiceOverview({ invoices, onSelectInvoice }) {
+// It accepts:
+// - 'invoices': an array of invoice objects
+// - 'onSelectInvoice': a callback function to set the active invoice
+// - 'currency': localized currency symbol string (defaults to '$')
+export default function InvoiceOverview({ invoices, onSelectInvoice, currency = '$' }) {
   return (
     // Outer container for spacing our title and table board
     <div className="space-y-8 animate-fadeIn">
@@ -49,8 +52,8 @@ export default function InvoiceOverview({ invoices, onSelectInvoice }) {
                   <td className="py-4 px-4 text-sm font-semibold text-slate-900">{invoice.clientName}</td>
                   {/* Unique Invoice ID */}
                   <td className="py-4 px-4 text-sm text-slate-500">{invoice.id}</td>
-                  {/* Amount - dynamically formatted with commas for thousands */}
-                  <td className="py-4 px-4 text-sm font-medium text-slate-900">${invoice.amount.toLocaleString()}</td>
+                  {/* Amount - dynamically formatted with commas for thousands and active currency symbol */}
+                  <td className="py-4 px-4 text-sm font-medium text-slate-900">{currency}{invoice.amount.toLocaleString()}</td>
                   {/* Due Date */}
                   <td className="py-4 px-4 text-sm text-slate-500">{invoice.dueDate}</td>
                   {/* Status Badge - rendered using our reusable InvoiceStatus component */}

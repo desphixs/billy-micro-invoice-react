@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 // Import premium, clean icons from Lucide React to give our app a modern design
 import { 
   ReceiptText,
@@ -21,78 +21,102 @@ function App() {
   // - When a user clicks a row, we set it to that invoice's unique ID.
   const [activeInvoiceId, setActiveInvoiceId] = useState(null)
 
-  // We define a list of mock invoices inside our React state.
-  // - Each invoice contains detailed properties: 'id', 'clientName', 'clientEmail', 'amount',
-  //   'issueDate', 'dueDate', 'status', and an array of 'items' (description, quantity, and rate).
-  // - This list matches what Sarah Freelance needs to track.
-  // - We use 'useState' so that when we eventually add features to edit or mark paid, the UI updates instantly.
-  const [invoices, setInvoices] = useState([
-    { 
-      id: 'INV-001', 
-      clientName: 'Acme Corporation', 
-      clientEmail: 'billing@acme.com',
-      amount: 1500, 
-      issueDate: '2026-05-15',
-      dueDate: '2026-06-01', 
-      status: 'Paid',
-      items: [
-        { description: 'Website Redesign Project', quantity: 1, rate: 1000 },
-        { description: 'SEO Optimization Service', quantity: 2, rate: 250 }
-      ]
-    },
-    { 
-      id: 'INV-002', 
-      clientName: 'Dexter Labs', 
-      clientEmail: 'dexter@labs.com',
-      amount: 850, 
-      issueDate: '2026-05-20',
-      dueDate: '2026-05-28', 
-      status: 'Pending',
-      items: [
-        { description: 'Custom Dashboard UI Integration', quantity: 1, rate: 600 },
-        { description: 'General Consulting Support', quantity: 5, rate: 50 }
-      ]
-    },
-    { 
-      id: 'INV-003', 
-      clientName: 'Wayne Enterprises', 
-      clientEmail: 'accounts@wayne.corp',
-      amount: 3200, 
-      issueDate: '2026-04-15',
-      dueDate: '2026-05-15', 
-      status: 'Overdue',
-      items: [
-        { description: 'Mobile Application Architecture Design', quantity: 1, rate: 2500 },
-        { description: 'API Backend Deployment Consulting', quantity: 7, rate: 100 }
-      ]
-    },
-    { 
-      id: 'INV-004', 
-      clientName: 'Stark Industries', 
-      clientEmail: 'tony@stark.com',
-      amount: 4200, 
-      issueDate: '2026-05-10',
-      dueDate: '2026-06-10', 
-      status: 'Pending',
-      items: [
-        { description: 'Iron Suit HUD Interface Widget', quantity: 1, rate: 3000 },
-        { description: 'Cloud Infrastructure Setup Services', quantity: 8, rate: 150 }
-      ]
-    },
-    { 
-      id: 'INV-005', 
-      clientName: 'Oscorp Technologies', 
-      clientEmail: 'finance@oscorp.org',
-      amount: 950, 
-      issueDate: '2026-05-01',
-      dueDate: '2026-05-10', 
-      status: 'Paid',
-      items: [
-        { description: 'Responsive Web Portal Landing Page', quantity: 1, rate: 800 },
-        { description: 'Logo and Visual Branding Materials', quantity: 1, rate: 150 }
-      ]
+  // We initialize our settings state with a lazy initialization function.
+  // - It inspects localStorage. If 'billy_settings' exists, we parse and return it.
+  // - Otherwise, we fallback to our starting defaults.
+  const [settings, setSettings] = useState(() => {
+    const saved = localStorage.getItem('billy_settings')
+    return saved ? JSON.parse(saved) : {
+      businessName: 'Sarah Freelance',
+      email: 'sarah@design.com',
+      currency: '$',
+      paymentTerms: 'Net 30'
     }
-  ])
+  })
+
+  // We define a list of mock invoices inside our React state with a lazy initializer.
+  // - It checks if 'billy_invoices' exists in localStorage. If so, we parse it.
+  // - Otherwise, we seed it with our rich starting list of five invoices.
+  const [invoices, setInvoices] = useState(() => {
+    const saved = localStorage.getItem('billy_invoices')
+    return saved ? JSON.parse(saved) : [
+      { 
+        id: 'INV-001', 
+        clientName: 'Acme Corporation', 
+        clientEmail: 'billing@acme.com',
+        amount: 1500, 
+        issueDate: '2026-05-15',
+        dueDate: '2026-06-01', 
+        status: 'Paid',
+        items: [
+          { description: 'Website Redesign Project', quantity: 1, rate: 1000 },
+          { description: 'SEO Optimization Service', quantity: 2, rate: 250 }
+        ]
+      },
+      { 
+        id: 'INV-002', 
+        clientName: 'Dexter Labs', 
+        clientEmail: 'dexter@labs.com',
+        amount: 850, 
+        issueDate: '2026-05-20',
+        dueDate: '2026-05-28', 
+        status: 'Pending',
+        items: [
+          { description: 'Custom Dashboard UI Integration', quantity: 1, rate: 600 },
+          { description: 'General Consulting Support', quantity: 5, rate: 50 }
+        ]
+      },
+      { 
+        id: 'INV-003', 
+        clientName: 'Wayne Enterprises', 
+        clientEmail: 'accounts@wayne.corp',
+        amount: 3200, 
+        issueDate: '2026-04-15',
+        dueDate: '2026-05-15', 
+        status: 'Overdue',
+        items: [
+          { description: 'Mobile Application Architecture Design', quantity: 1, rate: 2500 },
+          { description: 'API Backend Deployment Consulting', quantity: 7, rate: 100 }
+        ]
+      },
+      { 
+        id: 'INV-004', 
+        clientName: 'Stark Industries', 
+        clientEmail: 'tony@stark.com',
+        amount: 4200, 
+        issueDate: '2026-05-10',
+        dueDate: '2026-06-10', 
+        status: 'Pending',
+        items: [
+          { description: 'Iron Suit HUD Interface Widget', quantity: 1, rate: 3000 },
+          { description: 'Cloud Infrastructure Setup Services', quantity: 8, rate: 150 }
+        ]
+      },
+      { 
+        id: 'INV-005', 
+        clientName: 'Oscorp Technologies', 
+        clientEmail: 'finance@oscorp.org',
+        amount: 950, 
+        issueDate: '2026-05-01',
+        dueDate: '2026-05-10', 
+        status: 'Paid',
+        items: [
+          { description: 'Responsive Web Portal Landing Page', quantity: 1, rate: 800 },
+          { description: 'Logo and Visual Branding Materials', quantity: 1, rate: 150 }
+        ]
+      }
+    ]
+  })
+
+  // We use useEffect to save the invoices list into localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('billy_invoices', JSON.stringify(invoices))
+  }, [invoices])
+
+  // We use useEffect to save settings into localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('billy_settings', JSON.stringify(settings))
+  }, [settings])
 
   // We search through the invoices array to locate the active invoice object.
   // - If activeInvoiceId is null, activeInvoice will be undefined.
@@ -189,18 +213,17 @@ function App() {
         </div>
 
         {/* 
-          -------------------------------------------------------------
           FREELANCER PROFILE WIDGET
-          -------------------------------------------------------------
-          Located at the bottom of the sidebar to make the interface feel professional and personalized.
+          - Displays the logged-in user at the bottom.
+          - We dynamically query this from our saved settings state!
         */}
         <div className="p-3 bg-slate-50 rounded-2xl flex items-center gap-3 border border-slate-100">
-          <div className="h-10 w-10 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-600 font-semibold">
-            SF
+          <div className="h-10 w-10 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-600 font-semibold text-xs tracking-wider">
+            {settings.businessName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
           </div>
           <div className="overflow-hidden">
-            <h4 className="text-xs font-semibold text-slate-900 truncate">Sarah Freelance</h4>
-            <p className="text-[10px] text-slate-500 truncate">sarah@design.com</p>
+            <h4 className="text-xs font-semibold text-slate-900 truncate">{settings.businessName}</h4>
+            <p className="text-[10px] text-slate-500 truncate">{settings.email}</p>
           </div>
         </div>
 
@@ -215,21 +238,26 @@ function App() {
       */}
       <main className="flex-1 p-10">
         
-         {/* 
-           We use conditional rendering to show the Invoices Overview panel only when activeTab is 'invoices'.
-           This ensures clean page switches without reloading the browser!
-           We pass the active invoices array and a callback to set the active invoice when clicked.
-         */}
-         {activeTab === 'invoices' && (
-           <InvoiceOverview invoices={invoices} onSelectInvoice={setActiveInvoiceId} />
-         )}
+        {/* 
+          We use conditional rendering to show the Invoices Overview panel only when activeTab is 'invoices'.
+          This ensures clean page switches without reloading the browser!
+          We pass the active invoices array, selection callback, and currency symbol from settings.
+        */}
+        {activeTab === 'invoices' && (
+          <InvoiceOverview 
+            invoices={invoices} 
+            onSelectInvoice={setActiveInvoiceId} 
+            currency={settings.currency}
+          />
+        )}
           
-         {/* 
-           We use conditional rendering to show the App Settings panel only when activeTab is 'settings'.
-         */}
-         {activeTab === 'settings' && (
-           <SettingsView />
-         )}
+        {/* 
+          We use conditional rendering to show the App Settings panel only when activeTab is 'settings'.
+          We pass our active settings and a state update callback prop.
+        */}
+        {activeTab === 'settings' && (
+          <SettingsView settings={settings} onUpdateSettings={setSettings} />
+        )}
 
       </main>
 
@@ -238,13 +266,14 @@ function App() {
         INVOICE DETAIL MODAL OVERLAY
         =============================================================
         - If activeInvoiceId is set and we successfully find that invoice, we show the detail panel.
-        - We pass the activeInvoice object, close callback, and markAsPaid callback props.
+        - We pass the activeInvoice object, close callback, markAsPaid callback, and currency symbol.
       */}
       {activeInvoiceId && activeInvoice && (
         <InvoiceDetail 
           invoice={activeInvoice} 
           onClose={() => setActiveInvoiceId(null)} 
           onMarkAsPaid={markAsPaid}
+          currency={settings.currency}
         />
       )}
 
