@@ -7,6 +7,7 @@ import {
 // Import custom, modular view components from our new components directory
 import InvoiceOverview from './components/InvoiceOverview'
 import SettingsView from './components/SettingsView'
+import InvoiceDetail from './components/InvoiceDetail'
 
 function App() {
   // We initialize the activeTab state to keep track of which menu page is selected.
@@ -15,17 +16,88 @@ function App() {
   // - 'setActiveTab' is the function we call to update this tab value.
   const [activeTab, setActiveTab] = useState('invoices')
 
+  // We initialize the activeInvoiceId state to track which invoice is clicked.
+  // - When it is null, no detail sidebar is shown.
+  // - When a user clicks a row, we set it to that invoice's unique ID.
+  const [activeInvoiceId, setActiveInvoiceId] = useState(null)
+
   // We define a list of mock invoices inside our React state.
-  // - Each invoice contains an 'id', 'clientName', 'amount', 'dueDate', and 'status'.
+  // - Each invoice contains detailed properties: 'id', 'clientName', 'clientEmail', 'amount',
+  //   'issueDate', 'dueDate', 'status', and an array of 'items' (description, quantity, and rate).
   // - This list matches what Sarah Freelance needs to track.
   // - We use 'useState' so that when we eventually add features to edit or mark paid, the UI updates instantly.
   const [invoices, setInvoices] = useState([
-    { id: 'INV-001', clientName: 'Acme Corporation', amount: 1500, dueDate: '2026-06-01', status: 'Paid' },
-    { id: 'INV-002', clientName: 'Dexter Labs', amount: 850, dueDate: '2026-05-28', status: 'Pending' },
-    { id: 'INV-003', clientName: 'Wayne Enterprises', amount: 3200, dueDate: '2026-05-15', status: 'Overdue' },
-    { id: 'INV-004', clientName: 'Stark Industries', amount: 4200, dueDate: '2026-06-10', status: 'Pending' },
-    { id: 'INV-005', clientName: 'Oscorp Technologies', amount: 950, dueDate: '2026-05-10', status: 'Paid' }
+    { 
+      id: 'INV-001', 
+      clientName: 'Acme Corporation', 
+      clientEmail: 'billing@acme.com',
+      amount: 1500, 
+      issueDate: '2026-05-15',
+      dueDate: '2026-06-01', 
+      status: 'Paid',
+      items: [
+        { description: 'Website Redesign Project', quantity: 1, rate: 1000 },
+        { description: 'SEO Optimization Service', quantity: 2, rate: 250 }
+      ]
+    },
+    { 
+      id: 'INV-002', 
+      clientName: 'Dexter Labs', 
+      clientEmail: 'dexter@labs.com',
+      amount: 850, 
+      issueDate: '2026-05-20',
+      dueDate: '2026-05-28', 
+      status: 'Pending',
+      items: [
+        { description: 'Custom Dashboard UI Integration', quantity: 1, rate: 600 },
+        { description: 'General Consulting Support', quantity: 5, rate: 50 }
+      ]
+    },
+    { 
+      id: 'INV-003', 
+      clientName: 'Wayne Enterprises', 
+      clientEmail: 'accounts@wayne.corp',
+      amount: 3200, 
+      issueDate: '2026-04-15',
+      dueDate: '2026-05-15', 
+      status: 'Overdue',
+      items: [
+        { description: 'Mobile Application Architecture Design', quantity: 1, rate: 2500 },
+        { description: 'API Backend Deployment Consulting', quantity: 7, rate: 100 }
+      ]
+    },
+    { 
+      id: 'INV-004', 
+      clientName: 'Stark Industries', 
+      clientEmail: 'tony@stark.com',
+      amount: 4200, 
+      issueDate: '2026-05-10',
+      dueDate: '2026-06-10', 
+      status: 'Pending',
+      items: [
+        { description: 'Iron Suit HUD Interface Widget', quantity: 1, rate: 3000 },
+        { description: 'Cloud Infrastructure Setup Services', quantity: 8, rate: 150 }
+      ]
+    },
+    { 
+      id: 'INV-005', 
+      clientName: 'Oscorp Technologies', 
+      clientEmail: 'finance@oscorp.org',
+      amount: 950, 
+      issueDate: '2026-05-01',
+      dueDate: '2026-05-10', 
+      status: 'Paid',
+      items: [
+        { description: 'Responsive Web Portal Landing Page', quantity: 1, rate: 800 },
+        { description: 'Logo and Visual Branding Materials', quantity: 1, rate: 150 }
+      ]
+    }
   ])
+
+  // We search through the invoices array to locate the active invoice object.
+  // - If activeInvoiceId is null, activeInvoice will be undefined.
+  // - If found, it returns the full invoice object containing clients, line items, and status.
+  const activeInvoice = invoices.find(invoice => invoice.id === activeInvoiceId)
 
   return (
     // This is our main outer container. 
@@ -122,9 +194,9 @@ function App() {
       </aside>
 
       {/* 
-        -------------------------------------------------------------
+        =============================================================
         MAIN WORKSPACE CONTENT
-        -------------------------------------------------------------
+        =============================================================
         - 'flex-1' allows the content to expand and fill all remaining horizontal screen space.
         - 'p-10' adds generous, aesthetic breathing room so elements feel premium.
       */}
@@ -133,9 +205,10 @@ function App() {
          {/* 
            We use conditional rendering to show the Invoices Overview panel only when activeTab is 'invoices'.
            This ensures clean page switches without reloading the browser!
+           We pass the active invoices array and a callback to set the active invoice when clicked.
          */}
          {activeTab === 'invoices' && (
-           <InvoiceOverview invoices={invoices} />
+           <InvoiceOverview invoices={invoices} onSelectInvoice={setActiveInvoiceId} />
          )}
           
          {/* 
@@ -146,6 +219,17 @@ function App() {
          )}
 
       </main>
+
+      {/* 
+        =============================================================
+        INVOICE DETAIL MODAL OVERLAY
+        =============================================================
+        - If activeInvoiceId is set and we successfully find that invoice, we show the detail panel.
+        - We pass the activeInvoice object and a close function callback that resets activeInvoiceId to null.
+      */}
+      {activeInvoiceId && activeInvoice && (
+        <InvoiceDetail invoice={activeInvoice} onClose={() => setActiveInvoiceId(null)} />
+      )}
 
     </div>
   )

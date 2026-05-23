@@ -2,8 +2,8 @@
 import InvoiceStatus from './InvoiceStatus'
 
 // The component for rendering the Invoice Overview view panel.
-// It accepts 'invoices' (an array of invoice objects) as a prop from App.jsx.
-export default function InvoiceOverview({ invoices }) {
+// It accepts 'invoices' (an array of invoice objects) and 'onSelectInvoice' (a callback function) as props.
+export default function InvoiceOverview({ invoices, onSelectInvoice }) {
   return (
     // Outer container for spacing our title and table board
     <div className="space-y-8 animate-fadeIn">
@@ -36,11 +36,14 @@ export default function InvoiceOverview({ invoices }) {
               {/* 
                 We loop over our list of invoices using '.map()'.
                 For each invoice item, we return a standard HTML table row '<tr>' dynamically filled with values.
+                We make each row clickable by adding the 'cursor-pointer' Tailwind class.
+                When clicked, the 'onSelectInvoice' callback is triggered with the invoice's ID.
               */}
               {invoices.map((invoice) => (
                 <tr 
                   key={invoice.id} 
-                  className="hover:bg-slate-50/50 transition-colors duration-150"
+                  onClick={() => onSelectInvoice(invoice.id)}
+                  className="hover:bg-slate-50/50 cursor-pointer transition-colors duration-150"
                 >
                   {/* Client Name */}
                   <td className="py-4 px-4 text-sm font-semibold text-slate-900">{invoice.clientName}</td>
